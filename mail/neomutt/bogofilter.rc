@@ -1,0 +1,8 @@
+# press S to learn as spam and save to .spam
+# press H to learn as ham and save
+macro index S "|bogofilter -s\ns=.spam" "Learn as spam and save to .spam"
+macro pager S "|bogofilter -s\ns=.spam" "Learn as spam and save to .spam"
+macro index H "|bogofilter -n\ns=" "Learn as ham and save"
+macro pager H "|bogofilter -n\ns=" "Learn as ham and save"
+
+

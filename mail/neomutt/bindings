@@ -1,0 +1,96 @@
+# some sane vim-like keybindings
+bind index,pager k previous-entry
+bind index,pager j next-entry
+bind index,pager g noop
+bind index,pager \Cu half-up
+bind index,pager \Cd half-down
+bind pager gg top
+bind index gg first-entry
+bind pager G bottom
+bind index G last-entry
+
+# Sidebar Navigation
+bind index,pager <down> sidebar-next
+bind index,pager <up> sidebar-prev
+bind index,pager <right> sidebar-open
+
+# global index and pager shortcuts
+bind index,pager @ compose-to-sender
+bind index,pager R group-reply
+bind index,pager D purge-message
+bind index <tab> sync-mailbox
+bind index <space> collapse-thread
+
+# Add Email to Taskwarrior
+macro index,pager T \
+	"<pipe-message> mutt2task" "Add Email as task to taskwarrior"
+
+
+# Save all attachments
+macro pager S "<pipe-message> ripmime -i - -d ~/Downloads && rm ~/Downloads/textfile*" "Save all non-text attachments using ripmime"
+# opening urls with urlscan
+macro pager \cb "<pipe-message> urlscan<Enter>" "call urlscan to extract URLs out of a message"
+
+# Sync all email
+folder-hook .      'macro index d "<save-message>=trash<enter>"'
+folder-hook =trash 'macro index d <delete-message>'
+macro index o "<shell-escape>fetchmail.sh<enter>" "run fetchmail script to get mail"
+
+# Spam handling: escape-d: spam, escape-u: ham, escape-t: test
+# is also done by bogofilter... S and H
+macro index,pager \ed "<enter-command>unset wait_key\n<pipe-entry>sa-learn --spam\n<enter-command>set wait_key\n<save-message>=spam\n" "Tags as SPAM"
+macro index,pager \eu "<pipe-entry>sa-learn --ham\n<enter-command>set wait_key\n<save-message>=inbox\n" "Untags as SPAM"
+macro index,pager \et "<pipe-entry>spamassassin -t\n<enter-command>set wait_key\n" "Tests if it is SPAM"
+
+# notmuch-mutt integration
+#
+#Invoke notmuch, rebuild threads and tag emails as removed from Inbox?!
+macro index <F8> \
+     "<enter-command>unset wait_key<enter><shell-escape>notmuch-mutt --prompt search<enter><change-folder-readonly>`echo ${XDG_CACHE_HOME:-$HOME/.cache}/notmuch/mutt/results`<enter>" \
+     "notmuch: search mail"
+macro index <F9> \
+     "<enter-command>unset wait_key<enter><pipe-message>notmuch-mutt thread<enter><change-folder-readonly>`echo ${XDG_CACHE_HOME:-$HOME/.cache}/notmuch/mutt/results`<enter><enter-command>set wait_key<enter>" \
+     "notmuch: reconstruct thread"
+macro index <F6> \
+     "<enter-command>unset wait_key<enter><pipe-message>notmuch-mutt tag -Inbox<enter>" \
+     "notmuch: remove message from inbox"
+#Not sure what this F6 option is yet - still investigating
+
+# notmuch config from manpage
+#macro index <F8> \
+#"<enter-command>set my_old_pipe_decode=\$pipe_decode my_old_wait_key=\$wait_key nopipe_decode nowait_key<enter>\
+#<shell-escape>notmuch-mutt -r --prompt search<enter>\
+#<change-folder-readonly>`echo ${XDG_CACHE_HOME:-$HOME/.cache}/notmuch/mutt/results`<enter>\
+#<enter-command>set pipe_decode=\$my_old_pipe_decode wait_key=\$my_old_wait_key<enter>" \
+# "notmuch: search mail"
+
+#macro index <F9> \
+#"<enter-command>set my_old_pipe_decode=\$pipe_decode my_old_wait_key=\$wait_key nopipe_decode nowait_key<enter>\
+#<pipe-message>notmuch-mutt -r thread<enter>\
+#<change-folder-readonly>`echo ${XDG_CACHE_HOME:-$HOME/.cache}/notmuch/mutt/results`<enter>\
+#<enter-command>set pipe_decode=\$my_old_pipe_decode wait_key=\$my_old_wait_key<enter>" \
+# "notmuch: reconstruct thread"
+
+#macro index <F6> \
+#"<enter-command>set my_old_pipe_decode=\$pipe_decode my_old_wait_key=\$wait_key nopipe_decode nowait_key<enter>\
+#<pipe-message>notmuch-mutt tag -- -inbox<enter>\
+#<enter-command>set pipe_decode=\$my_old_pipe_decode wait_key=\$my_old_wait_key<enter>" \
+# "notmuch: remove message from inbox"
+
+
+# my fav
+# Spam andling is done via bogofilter & spamassassin, see above
+# macro index,pager J \
+#  "<enter-command>set my_old_resolve=\$resolve noresolve<enter>\
+#  <tag-prefix><clear-flag>n<enter-command>set resolve=\$my_old_resolve<enter>\
+#  <save-message>+spam<enter>" \
+#  "mark as read and move to spam"
+
+macro index,pager A \
+  "<save-message>+archive<enter>"  \
+  "move message to the archive"
+
+macro index,pager I \
+  "<save-message>+inbox<enter>"  \
+  "move message to the inbox"
+

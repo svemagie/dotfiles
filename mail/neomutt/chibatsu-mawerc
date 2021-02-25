@@ -1,0 +1,20 @@
+set from="mawe@chibatsu.net"
+set realname="mawe"
+set sendmail = "/bin/msmtp -a chibatsu-mawe"
+
+# Set folders
+set spoolfile = "+inbox"
+set mbox = "+archive"
+set postponed = "+drafts"
+set record = "+sent"
+set trash = "+trash"
+
+# custom signaure
+set signature = ~/.neomutt/sig.chibatsu
+
+color status cyan default
+
+macro compose v "<edit-from>^Uidentity\_<tab>" "Select from"
+alias identity_1 MaWe <mawe@chibatsu.net>
+alias identity_2 MaWe <mawe@systemli.org>
+alias identity_3 Svemagie <svemagie@anche.no>

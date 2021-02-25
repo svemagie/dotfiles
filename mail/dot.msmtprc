@@ -1,0 +1,45 @@
+defaults
+tls on
+tls_starttls on
+auth on
+
+logfile ~/.msmtp.log
+
+account systemli
+host mail.systemli.org
+from mawe@systemli.org
+user mawe@systemli.org
+passwordeval gpg2 --no-tty -q -d ~/.pass.systemli.gpg
+
+account chibatsu-sven
+host mail.chibatsu.net
+from sven@chibatsu.net
+user sven@chibatsu.net
+passwordeval gpg2 --no-tty -q -d ~/.pass.blackwall.gpg
+auth off
+tls_certcheck off
+
+account chibatsu-mawe
+#host mail.chibatsu.net
+host blackwall.local
+from mawe@chibatsu.net
+user mawe@chibatsu.net
+passwordeval gpg2 --no-tty -q -d ~/.pass.chibatsu-mawe.gpg
+tls_certcheck off
+auth off
+tls_certcheck off
+
+account icloud
+host smtp.mail.me.com
+from sgiersig@icloud.com
+user sgiersig@icloud.com
+passwordeval "gpg2 --no-tty -q -d ~/.pass.icloud.gpg"
+tls_certcheck off
+port 	587 
+
+account anche
+host smtp.autistici.org
+from svemagie@anche.no
+user svemagie@anche.no
+passwordeval gpg2 --no-tty -q -d ~/.pass.anche.gpg
+port 	587 

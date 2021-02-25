@@ -1,0 +1,42 @@
+# Example for a user configuration file ~/.mpoprc
+#
+
+# Set default values for all following accounts.
+defaults
+tls on
+delivery mda "/usr/bin/procmail -f '%F' -m $HOME/.procmailrc"
+
+# Use an UIDLS file in ~/.local/share instead of ~/.mpop_uidls
+uidls_file ~/.local/share/%U_at_%H
+
+account blackwall-sven
+host blackwall.local
+user sven
+passwordeval gpg2 --no-tty -q -d ~/.pass.blackwall.gpg
+tls_certcheck off
+filter ~/bin/mailspamscan.sh
+filter  if [ "`grep "^X-Spam-Status: Yes"`" ]; then exit 1; else exit 0; fi
+
+account blackwall-mawe
+host blackwall.local
+user mawe
+passwordeval gpg2 --no-tty -q -d ~/.pass.chibatsu-mawe.gpg
+tls_certcheck off
+filter ~/bin/mailspamscan.sh
+filter  if [ "`grep "^X-Spam-Status: Yes"`" ]; then exit 1; else exit 0; fi
+
+account anche
+host mail.autistici.org
+user svemagie@anche.no
+passwordeval gpg2 --no-tty -q -d ~/.pass.anche.gpg
+filter ~/bin/mailspamscan.sh
+filter	if [ "`grep "^X-Spam-Status: Yes"`" ]; then exit 1; else exit 0; fi
+
+account systemli
+host mail.systemli.org
+user mawe@systemli.org
+passwordeval gpg2 --no-tty -q -d ~/.pass.systemli.gpg
+filter ~/bin/mailspamscan.sh
+filter	if [ "`grep "^X-Spam-Status: Yes"`" ]; then exit 1; else exit 0; fi
+
+#account default : blackwall-sven

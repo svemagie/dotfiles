@@ -1,0 +1,150 @@
+# for viewing html emails
+auto_view text/html
+set mailcap_path = ~/.neomutt/mailcap.rc
+alternative_order text/plain text/html
+
+# set from to ensure mutt does not put user@localhost
+set use_envelope_from=yes
+set envelope_from_address="mawe <mawe@chibatsu.net"
+set use_from=yes
+set from="mawe <mawe@chibatsu.net"
+
+# = or + expands to folder (~/Mail)
+set mbox_type=Maildir
+set folder="~/Mail"
+# keeping the default spoolfile (/var/mail/$LOGNAME)
+# read mail from spoolfile will go to mbox
+set spoolfile="/var/mail/$LOGNAME"
+set spoolfile = "+inbox"
+set mbox="+inbox"
+set move=yes
+set record="+sent"
+set postponed="+drafts"
+
+mailboxes /var/mail/$LOGNAME +inbox
+#mailboxes /var/mail/$LOGNAME 
+set sort=threads
+set include=yes
+set indent_string="> "
+
+# bogofilter
+# if mutt's pipe_decode option is on,
+# information will be lost
+# when piping messages to bogofilter
+# /usr/share/doc/bogofilter-common/README.Debian
+set pipe_decode=no
+
+# basic options
+set wait_key = no
+set timeout = 3
+set mail_check = 0
+set delete
+set quit
+set thorough_search
+set mail_check_stats
+unset confirmappend
+unset move
+unset mark_old
+unset beep_new
+
+# compose View Options
+set envelope_from                    # which from?
+set edit_headers                     # show headers when composing
+set fast_reply                       # skip to compose when replying
+set askcc                            # ask for CC:
+set fcc_attach                       # save attachments with the body
+set forward_format = "Fwd: %s"       # format of subject when forwarding
+set forward_decode                   # decode when forwarding
+set attribution = "On %d, %n wrote:" # format of quoting header
+set reply_to                         # reply to Reply to: field
+set reverse_name                     # reply as whomever it was to
+set include                          # include message in replies
+set forward_quote                    # include message in forwards
+set editor="vim -c 'set spell spelllang=de,en'" 
+set text_flowed
+unset sig_dashes                     # no dashes before sig
+unset mime_forward                   # forward attachments as part of bod
+set header_cache = "/home/mawe/.neomutt/cache/headers"
+set message_cachedir = "/home/mawe/.neomutt/cache/bodies"
+
+# status bar, date format, finding stuff etc.
+set status_chars = " *%A"
+set status_format = "[ Folder: %f ] [%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]%>─%?p?( %p postponed )?"
+set date_format = "%d.%m.%Y %H:%M"
+set index_format = "[%Z] %?X?A&-? %D  %-20.20F  %s"
+set sort = threads
+set sort_aux = reverse-last-date-received
+set uncollapse_jump
+set sort_re
+set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
+set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
+set send_charset = "utf-8:iso-8859-1:us-ascii"
+set charset = "utf-8"
+
+# Pager View Options
+set pager_index_lines = 10
+set pager_context = 3
+set pager_stop
+set menu_scroll
+set tilde
+unset markers
+
+# email headers and attachments
+ignore *
+unignore from: to: cc: bcc: date: subject:
+unhdr_order *
+hdr_order from: to: cc: bcc: date: subject:
+alternative_order text/plain text/enriched text/html
+auto_view text/html
+set rfc2047_parameters
+
+# sidebar patch config
+set sidebar_visible
+set sidebar_short_path
+set sidebar_folder_indent
+set sidebar_width = 25
+set sidebar_divider_char = ' | '
+set sidebar_indent_string = '  ''
+set sidebar_format = "%B %* [%?N?%N / ?%S]"
+set sidebar_delim_chars="/"
+
+# Maiboxes in Sidebar
+named-mailboxes "===== local =====" "=inbox"
+mailboxes =inbox =drafts =archive =unsure =sent =root =spam =trash 
+
+named-mailboxes "===== icloud =====" "=inbox"
+mailboxes =icloud/inbox =icloud/Archive =icloud/'Sent Messages'
+
+
+# GPG/PGP 
+set pgp_sign_as = 9C7BB236D66104BB
+set crypt_use_gpgme = yes
+set crypt_autosign = no
+set crypt_verify_sig = yes
+set crypt_replysign = yes
+set crypt_replyencrypt = yes
+set crypt_replysignencrypted = yes
+
+
+source ~/.neomutt/abook.rc
+source ~/.neomutt/urlview.rc
+source ~/.neomutt/pyzor.rc
+source ~/.neomutt/bogofilter.rc
+source ~/.neomutt/color
+source ~/.neomutt/bindings
+
+# Accounts & Profiles
+
+## default
+source  ~/.neomutt/prof.chi-sven
+
+# Switch accounts with F keys
+macro index <f2> '<sync-mailbox><refresh><enter-command>source  ~/.neomutt/prof.chi-sven<enter><change-folder>!<enter>'
+macro index <f3> '<sync-mailbox><refresh><enter-command>source  ~/.neomutt/prof.chi-mawe<enter><change-folder>!<enter>'
+macro index <f4> '<sync-mailbox><refresh><enter-command>source ~/.neomutt/prof.anche<enter><change-folder>!<enter>'
+macro index <f5> '<sync-mailbox><refresh><enter-command>source ~/.neomutt/prof.icloud<enter><change-folder>!<enter>'
+
+# OpenPGP mail header
+#source ~/.neomutt/header.rc
+#unignore OpenPGP
+

@@ -1,0 +1,97 @@
+MAILDIR=$HOME/Mail
+DEFAULT=/var/mail/$LOGNAME
+LOGFILE=$MAILDIR/procmail.log
+VERBOSE=yes
+
+:0
+* !^Content-Type: message/
+* !^Content-Type: multipart/
+* !^Content-Type: application/pgp
+{
+    :0 fBw
+    * ^-----BEGIN PGP MESSAGE-----
+    * ^-----END PGP MESSAGE-----
+    | formail \
+        -i "Content-Type: application/pgp; format=text; x-action=encrypt"
+
+    :0 fBw
+    * ^-----BEGIN PGP SIGNED MESSAGE-----
+    * ^-----BEGIN PGP SIGNATURE-----
+    * ^-----END PGP SIGNATURE-----
+    | formail \
+        -i "Content-Type: application/pgp; format=text; x-action=sign"
+}
+
+:0 fBw
+* ^-----BEGIN PGP PUBLIC KEY BLOCK-----
+* ^-----END PGP PUBLIC KEY BLOCK-----
+| formail -i "Content-Type: application/pgp-keys; format=text;"
+
+
+# pass email through clamassassin
+:0fw
+| /usr/bin/clamassassin
+
+# sort virus email to .IN.virus/ folder
+# or discard them to /dev/null
+:0:
+* ^X-Virus-Status: Yes
+IN.virus/
+
+# pass email through pyzor
+:0Wc
+| /usr/bin/pyzor check
+
+# add header to the email identified as spam
+:0Waf
+| /usr/bin/formail -A 'X-Pyzor: spam'
+
+# sort spam email to .spam/ folder
+# or discard them to /dev/null
+#
+:0a:
+* ^X-Pyzor: spam
+spam/
+
+# filter mail through bogofilter
+# and updating the wordlist
+:0fw
+| /usr/bin/bogofilter -u -e -p
+
+# if bogofilter failed, return the mail to the queue;
+# the MTA will retry to deliver it later
+# 75 is the value for EX_TEMPFAIL in /usr/include/sysexits.h
+:0e
+{ EXITCODE=75 HOST }
+
+# file the spam mail to .spam/ folder
+# or discard them to /dev/null
+:0:
+* ^X-Bogosity: Spam, tests=bogofilter
+spam/
+
+# file the mail to .unsure/
+# if it is neither ham nor spam.
+:0:
+* ^X-Bogosity: Unsure, tests=bogofilter
+unsure/
+
+# file the mail to .unsure/
+# if it does not have your address
+# on the Cc or To part of the header
+# and allow local mail to /var/mail/$LOGNAME
+:0:
+* !^(Cc|To):.*mawe@systemli\.org
+* !^(Cc|To):.*sven@systemli\.org
+* !^(Cc|To):.*svemagie@anche\.no
+* !^(To):.*\.local
+* !^(To):.*chibatsu\.net
+unsure/
+
+# deliver email to inbox/
+:0:
+* ^(Cc|To):.*mawe@systemli\.org
+* ^(Cc|To):.*sven@systemli\.org
+* ^(Cc|To):.*svemagie@anche\.no
+* ^(Cc|To):.*chibatsu\.net
+inbox/

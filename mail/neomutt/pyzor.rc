@@ -1,0 +1,2 @@
+# press F on spam message to report it with pyzor
+macro index F "|/usr/bin/pyzor report"
